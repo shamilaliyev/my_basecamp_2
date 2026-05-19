@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="simple-form-page">
+    <a class="back-link" href="{{ url_for('thread_show', thread_id=message.thread_id) }}">← back to thread</a>
+
+    <div class="form-paper">
+        <p class="kicker dark">message</p>
+        <h1>Edit Message</h1>
+        <p class="form-subtitle">{{ message.thread.title }}</p>
+
+        <form method="post" action="{{ url_for('message_update', message_id=message.id) }}">
+            <label>Message</label>
+            <textarea name="body" rows="8" required>{{ message.body }}</textarea>
+
+            <button class="full-button">Save Message</button>
+        </form>
+    </div>
+</section>
+{% endblock %}

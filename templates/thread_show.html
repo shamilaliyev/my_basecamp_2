@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block content %}
+<section class="thread-header">
+    <div>
+        <a class="back-link" href="{{ url_for('project_show', project_id=thread.project_id) }}">← back to project</a>
+        <p class="kicker dark">discussion thread</p>
+        <h1>{{ thread.title }}</h1>
+        <p>{{ thread.description }}</p>
+    </div>
+
+    {% if admin %}
+        <div class="thread-admin-actions">
+            <a href="{{ url_for('thread_edit', thread_id=thread.id) }}">edit thread</a>
+            <form method="post" action="{{ url_for('thread_destroy', thread_id=thread.id) }}">
+                <button>delete thread</button>
+            </form>
+        </div>
+    {% endif %}
+</section>
+
+<section class="message-layout">
+    <aside class="post-box">
+        <h2>Post a message</h2>
+        <p>Any project member can join the discussion.</p>
+
+        <form method="post" action="{{ url_for('message_create', thread_id=thread.id) }}">
+            <textarea name="body" rows="8" placeholder="Write your message..." required></textarea>
+            <button>Post Message</button>
+        </form>
+    </aside>
+
+    <section class="message-board">
+        <h2>Messages</h2>
+
+        {% for message in thread.messages %}
+            <article class="message-card">
+                <div class="message-head">
+                    <div>
+                        <strong>{{ message.user.full_name }}</strong>
+                        <span>{{ message.created_at.strftime("%Y-%m-%d %H:%M") }}</span>
+                    </div>
+
+                    {% if message.user_id == user.id or admin %}
+                        <div class="message-actions">
+                            <a href="{{ url_for('message_edit', message_id=message.id) }}">edit</a>
+                            <form method="post" action="{{ url_for('message_destroy', message_id=message.id) }}">
+                                <button>delete</button>
+                            </form>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <p>{{ message.body }}</p>
+            </article>
+        {% else %}
+            <div class="empty-box">
+                <h3>No messages yet</h3>
+                <p>Start the discussion by posting the first message.</p>
+            </div>
+        {% endfor %}
+    </section>
+</section>
+{% endblock %}
