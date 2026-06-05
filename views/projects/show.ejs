@@ -1,0 +1,196 @@
+<%- include("../partials/header", { pageTitle }) %>
+
+<div class="d-flex justify-content-between align-items-start flex-wrap gap-3 mb-4">
+  <div>
+    <h1 class="h2 mb-1"><%= project.title %></h1>
+    <p class="text-secondary mb-0">
+      Owner / Project Admin: <%= project.owner.name %>
+    </p>
+  </div>
+
+  <% if (canManageProject) { %>
+    <div class="d-flex gap-2 flex-wrap">
+      <a href="/projects/<%= project.id %>/edit" class="btn btn-outline-secondary">Edit Project</a>
+      <form action="/projects/<%= project.id %>?_method=DELETE" method="POST">
+        <button class="btn btn-outline-danger" type="submit">Delete Project</button>
+      </form>
+    </div>
+  <% } %>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3">Project Details</h2>
+        <div class="project-description p-3 rounded-3 bg-body-tertiary">
+          <p class="mb-0"><%= project.description || "No description added." %></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+          <div>
+            <h2 class="h4 mb-1">Let's discuss</h2>
+            <p class="text-secondary mb-0">Threads are created by the project admin.</p>
+          </div>
+
+          <% if (canManageProject) { %>
+            <a href="/projects/<%= project.id %>/threads/new" class="btn btn-primary">New Thread</a>
+          <% } %>
+        </div>
+
+        <% if (project.threads.length === 0) { %>
+          <div class="empty-box rounded-3 p-4 text-center">
+            <p class="mb-0 text-secondary">No threads yet.</p>
+          </div>
+        <% } else { %>
+          <div class="list-group discussion-list">
+            <% project.threads.forEach(function(thread) { %>
+              <a href="/projects/<%= project.id %>/threads/<%= thread.id %>" class="list-group-item list-group-item-action">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <strong><%= thread.title %></strong>
+                    <p class="mb-0 text-secondary small">
+                      Created by <%= thread.creator ? thread.creator.name : "Unknown user" %>
+                    </p>
+                  </div>
+                  <span class="badge text-bg-light border">
+                    <%= thread.messages.length %> message<%= thread.messages.length === 1 ? "" : "s" %>
+                  </span>
+                </div>
+              </a>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+          <div>
+            <h2 class="h4 mb-1">Attachments</h2>
+            <p class="text-secondary mb-0">Associated users can upload png, jpg, pdf, or txt files.</p>
+          </div>
+        </div>
+
+        <form action="/projects/<%= project.id %>/attachments" method="POST" enctype="multipart/form-data" class="upload-box rounded-3 p-3 mb-4">
+          <div class="row g-2 align-items-center">
+            <div class="col-md">
+              <input class="form-control" type="file" name="attachment" accept=".png,.jpg,.jpeg,.pdf,.txt" required />
+            </div>
+            <div class="col-md-auto">
+              <button class="btn btn-primary w-100" type="submit">Upload Attachment</button>
+            </div>
+          </div>
+        </form>
+
+        <% if (project.attachments.length === 0) { %>
+          <div class="empty-box rounded-3 p-4 text-center">
+            <p class="mb-0 text-secondary">No attachments uploaded yet.</p>
+          </div>
+        <% } else { %>
+          <div class="table-responsive">
+            <table class="table align-middle">
+              <thead>
+                <tr>
+                  <th>File</th>
+                  <th>Format</th>
+                  <th>Uploaded by</th>
+                  <th>Size</th>
+                  <th class="text-end">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% project.attachments.forEach(function(attachment) { %>
+                  <tr>
+                    <td>
+                      <a href="/uploads/attachments/<%= attachment.fileName %>" target="_blank">
+                        <%= attachment.originalName %>
+                      </a>
+                    </td>
+                    <td><span class="badge text-bg-light border text-uppercase"><%= attachment.format %></span></td>
+                    <td><%= attachment.uploader ? attachment.uploader.name : "Unknown user" %></td>
+                    <td><%= (attachment.size / 1024).toFixed(1) %> KB</td>
+                    <td class="text-end">
+                      <% if (canManageProject || attachment.userId === currentUser.id) { %>
+                        <form action="/projects/<%= project.id %>/attachments/<%= attachment.id %>?_method=DELETE" method="POST" class="d-inline">
+                          <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                        </form>
+                      <% } %>
+                    </td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 rounded-4 mb-4">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3">Associated Users</h2>
+
+        <div class="mb-3">
+          <span class="badge text-bg-primary me-1">Admin</span>
+          <strong><%= project.owner.name %></strong>
+        </div>
+
+        <% if (project.members.length === 0) { %>
+          <p class="text-secondary">No extra members added yet.</p>
+        <% } else { %>
+          <div class="list-group mb-3">
+            <% project.members.forEach(function(member) { %>
+              <div class="list-group-item d-flex justify-content-between align-items-center gap-2">
+                <span><%= member.name %></span>
+                <% if (canManageProject) { %>
+                  <form action="/projects/<%= project.id %>/members/<%= member.id %>?_method=DELETE" method="POST" class="m-0">
+                    <button class="btn btn-sm btn-outline-danger" type="submit">Remove</button>
+                  </form>
+                <% } %>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <% if (canManageProject) { %>
+          <form action="/projects/<%= project.id %>/members" method="POST" class="border-top pt-3">
+            <label class="form-label" for="userId">Add project member</label>
+            <div class="input-group">
+              <select class="form-select" id="userId" name="userId" required>
+                <option value="">Choose user</option>
+                <% availableUsers.forEach(function(user) { %>
+                  <option value="<%= user.id %>"><%= user.name %> (<%= user.email %>)</option>
+                <% }) %>
+              </select>
+              <button class="btn btn-outline-primary" type="submit">Add</button>
+            </div>
+            <% if (availableUsers.length === 0) { %>
+              <p class="form-text mb-0">There are no more users to add.</p>
+            <% } %>
+          </form>
+        <% } %>
+      </div>
+    </div>
+
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4">
+        <h2 class="h5">Permission Summary</h2>
+        <ul class="simple-list mb-0 text-secondary">
+          <li>Project admin can edit/delete the project.</li>
+          <li>Project admin can create, edit, and delete threads.</li>
+          <li>Associated users can upload attachments and post messages.</li>
+          <li>Users can edit/delete their own messages and attachments.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("../partials/footer") %>

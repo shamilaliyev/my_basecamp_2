@@ -1,0 +1,78 @@
+<%- include("partials/header", { pageTitle }) %>
+
+<div class="hero-card p-4 p-md-5 rounded-4 shadow-sm bg-white">
+  <div class="row align-items-center g-4">
+    <div class="col-lg-7">
+      <span class="badge text-bg-primary mb-3">MyBasecamp2</span>
+      <h1 class="display-6 fw-bold">A Basecamp-style project manager with files and discussions</h1>
+      <p class="lead text-secondary mt-3">
+        Create projects, add associated users, upload attachments, create discussion threads,
+        and post messages inside each project.
+      </p>
+      <div class="d-flex flex-wrap gap-2 mt-4">
+        <% if (currentUser) { %>
+          <a href="/projects" class="btn btn-primary">Open Projects</a>
+          <a href="/users/<%= currentUser.id %>" class="btn btn-outline-primary">View Profile</a>
+        <% } else { %>
+          <a href="/users/new" class="btn btn-primary">Create Account</a>
+          <a href="/sign-in" class="btn btn-outline-primary">Sign In</a>
+        <% } %>
+      </div>
+    </div>
+    <div class="col-lg-5">
+      <div class="card border-0 bg-body-tertiary rounded-4">
+        <div class="card-body p-4">
+          <h2 class="h5">Features included</h2>
+          <ul class="mb-0 simple-list">
+            <li>User registration, profile page, and delete user</li>
+            <li>Sign in and sign out with `sha256` password hashing</li>
+            <li>Admin and regular user permissions</li>
+            <li>Create, edit, show, and delete projects</li>
+            <li>Upload multiple attachments: png, jpg, pdf, and txt</li>
+            <li>Project-admin discussion threads</li>
+            <li>Messages inside threads for associated project users</li>
+            <li>SQLite database with Sequelize ORM</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4 mt-1">
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-body">
+        <h3 class="h5">1. Register</h3>
+        <p class="text-secondary mb-0">
+          The first created account automatically becomes the admin, so you can test
+          role management right away.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-body">
+        <h3 class="h5">2. Manage Users</h3>
+        <p class="text-secondary mb-0">
+          Admins can open the users page, promote users to admin, remove admin rights,
+          and delete users.
+        </p>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-4">
+    <div class="card h-100 shadow-sm border-0">
+      <div class="card-body">
+        <h3 class="h5">3. Collaborate</h3>
+        <p class="text-secondary mb-0">
+          Project admins add members, create threads, and associated users upload files
+          or post messages.
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("partials/footer") %>

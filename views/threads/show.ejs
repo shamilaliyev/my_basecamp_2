@@ -1,0 +1,96 @@
+<%- include("../partials/header", { pageTitle }) %>
+
+<div class="mb-3">
+  <a href="/projects/<%= project.id %>" class="btn btn-sm btn-outline-secondary">← Back to Project</a>
+</div>
+
+<div class="card shadow-sm border-0 rounded-4 mb-4">
+  <div class="card-body p-4">
+    <div class="d-flex justify-content-between align-items-start flex-wrap gap-3">
+      <div>
+        <p class="text-secondary mb-1">Project: <%= project.title %></p>
+        <h1 class="h2 mb-2"><%= thread.title %></h1>
+        <p class="text-secondary mb-0">
+          Created by <%= thread.creator ? thread.creator.name : "Unknown user" %>
+        </p>
+      </div>
+
+      <% if (canManageProject) { %>
+        <div class="d-flex gap-2 flex-wrap">
+          <a href="/projects/<%= project.id %>/threads/<%= thread.id %>/edit" class="btn btn-outline-secondary">Edit Thread</a>
+          <form action="/projects/<%= project.id %>/threads/<%= thread.id %>?_method=DELETE" method="POST">
+            <button class="btn btn-outline-danger" type="submit">Delete Thread</button>
+          </form>
+        </div>
+      <% } %>
+    </div>
+
+    <% if (thread.description) { %>
+      <div class="project-description p-3 rounded-3 bg-body-tertiary mt-3">
+        <p class="mb-0"><%= thread.description %></p>
+      </div>
+    <% } %>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4">
+        <h2 class="h4 mb-3">Messages</h2>
+
+        <% if (thread.messages.length === 0) { %>
+          <div class="empty-box rounded-3 p-4 text-center mb-4">
+            <p class="mb-0 text-secondary">No messages yet. Start the discussion below.</p>
+          </div>
+        <% } else { %>
+          <div class="message-list mb-4">
+            <% thread.messages.forEach(function(message) { %>
+              <div class="message-card rounded-3 p-3 mb-3">
+                <div class="d-flex justify-content-between align-items-start gap-3">
+                  <div>
+                    <strong><%= message.author ? message.author.name : "Unknown user" %></strong>
+                    <p class="text-secondary small mb-2"><%= message.createdAt.toLocaleString() %></p>
+                  </div>
+
+                  <% if (canManageProject || message.userId === currentUser.id) { %>
+                    <div class="d-flex gap-2">
+                      <a href="/projects/<%= project.id %>/threads/<%= thread.id %>/messages/<%= message.id %>/edit" class="btn btn-sm btn-outline-secondary">Edit</a>
+                      <form action="/projects/<%= project.id %>/threads/<%= thread.id %>/messages/<%= message.id %>?_method=DELETE" method="POST">
+                        <button class="btn btn-sm btn-outline-danger" type="submit">Delete</button>
+                      </form>
+                    </div>
+                  <% } %>
+                </div>
+                <p class="mb-0 message-content"><%= message.content %></p>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+
+        <form action="/projects/<%= project.id %>/threads/<%= thread.id %>/messages" method="POST" class="border-top pt-4">
+          <div class="mb-3">
+            <label class="form-label" for="content">Post a message</label>
+            <textarea class="form-control" id="content" name="content" rows="4" required></textarea>
+          </div>
+          <button class="btn btn-primary" type="submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4">
+        <h2 class="h5">Thread Rules</h2>
+        <ul class="simple-list mb-0 text-secondary">
+          <li>Only the project admin can create, edit, or delete the thread.</li>
+          <li>Any associated project user can post a message.</li>
+          <li>Message authors can edit or delete their own messages.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("../partials/footer") %>

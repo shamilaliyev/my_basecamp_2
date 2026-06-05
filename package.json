@@ -1,0 +1,27 @@
+{
+  "name": "my-basecamp-2",
+  "version": "1.0.0",
+  "description": "MyBasecamp2 built with Express, EJS, Sequelize, SQLite, project attachments, discussion threads, and messages.",
+  "main": "app.js",
+  "scripts": {
+    "start": "node app.js"
+  },
+  "keywords": [
+    "express",
+    "sequelize",
+    "sqlite",
+    "bootstrap",
+    "mvc"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-session": "^1.18.1",
+    "method-override": "^3.0.0",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
+    "multer": "^2.0.2"
+  }
+}

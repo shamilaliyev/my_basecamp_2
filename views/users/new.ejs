@@ -1,0 +1,43 @@
+<%- include("../partials/header", { pageTitle }) %>
+
+<div class="row justify-content-center">
+  <div class="col-md-7 col-lg-6">
+    <div class="card shadow-sm border-0 rounded-4">
+      <div class="card-body p-4">
+        <h1 class="h3 mb-3">Create Account</h1>
+        <p class="text-secondary">
+          The very first account becomes the admin automatically.
+        </p>
+
+        <form action="/users" method="POST">
+          <div class="mb-3">
+            <label class="form-label" for="name">Name</label>
+            <input class="form-control" type="text" id="name" name="name" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="email">Email</label>
+            <input class="form-control" type="email" id="email" name="email" required />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label" for="password">Password</label>
+            <input
+              class="form-control"
+              type="password"
+              id="password"
+              name="password"
+              minlength="4"
+              required
+            />
+            <div class="form-text">This project hashes passwords with SHA-256.</div>
+          </div>
+
+          <button class="btn btn-primary w-100" type="submit">Register</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<%- include("../partials/footer") %>
