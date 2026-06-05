@@ -2,7 +2,7 @@ services:
   - type: web
     name: my-basecamp-2
     env: node
-    buildCommand: npm install
+    buildCommand: rm -rf node_modules package-lock.json && npm install
     startCommand: npm start
     envVars:
       - key: NODE_ENV
